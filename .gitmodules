@@ -1,0 +1,3 @@
+[submodule "fast-style-transfer"]
+	path = fast-style-transfer
+	url = git@github.com:lengstrom/fast-style-transfer.git
