@@ -1,3 +1,6 @@
 [submodule "Part1_Intro_To_DL/Lesson5_Applying_DL/StyleTransfer/fast-style-transfer"]
 	path = Part1_Intro_To_DL/Lesson5_Applying_DL/StyleTransfer/fast-style-transfer
 	url = git@github.com:lengstrom/fast-style-transfer.git
+[submodule "Part1_Intro_To_DL/Lesson5_Applying_DL/DeepLearningFlappyBird"]
+	path = Part1_Intro_To_DL/Lesson5_Applying_DL/DeepLearningFlappyBird
+	url = https://github.com/yenchenlin/DeepLearningFlappyBird.git
