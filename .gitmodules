@@ -1,3 +1,3 @@
-[submodule "fast-style-transfer"]
-	path = fast-style-transfer
+[submodule "Part1_Intro_To_DL/Lesson5_Applying_DL/StyleTransfer/fast-style-transfer"]
+	path = Part1_Intro_To_DL/Lesson5_Applying_DL/StyleTransfer/fast-style-transfer
 	url = git@github.com:lengstrom/fast-style-transfer.git
