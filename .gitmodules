@@ -4,3 +4,6 @@
 [submodule "Part1_Intro_To_DL/Lesson5_Applying_DL/DeepLearningFlappyBird"]
 	path = Part1_Intro_To_DL/Lesson5_Applying_DL/DeepLearningFlappyBird
 	url = https://github.com/yenchenlin/DeepLearningFlappyBird.git
+[submodule "Udacity_DL_PyTorch"]
+	path = Udacity_DL_PyTorch
+	url = git@github.com:udacity/deep-learning-v2-pytorch.git
