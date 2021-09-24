@@ -84,5 +84,5 @@ for line_count, boundary_line in enumerate(boundary_lines):
         plt.plot(x_end_points, y_line, color = 'k')
     else:
         plt.plot(x_end_points, y_line, '-.g')
-plt.xlim([-0.25, 1.25])
-plt.ylim([-0.25, 1.25])
+plt.xlim([-0.05, 1.05])
+plt.ylim([-0.05, 1.05])
