@@ -5,7 +5,7 @@ Created on Sat Sep 18 00:00:27 2021
 
 @author: pkjha
 """
-
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -64,7 +64,7 @@ def trainPerceptronAlgorithm(X, y, learn_rate = 0.01, num_epochs = 25):
 """
 Read and plot raw data
 """
-data = pd.read_csv('data.csv').to_numpy()
+data = pd.read_csv(os.path.join(os.pardir, 'data.csv')).to_numpy()
 data_pos = data[data[:,2] == 1]
 data_neg = data[data[:,2] == 0]
 plt.figure(1)

@@ -5,7 +5,7 @@ Created on Sat Sep 18 00:00:27 2021
 
 @author: pkjha
 """
-
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -165,7 +165,7 @@ plt.figure(1)
 plt.scatter(data_pos[:, 0], data_pos[:, 1], color = 'b')
 plt.scatter(data_neg[:, 0], data_neg[:, 1], color = 'r')
 """
-data = pd.read_csv('data.csv', header=None)
+data = pd.read_csv(os.path.join(os.pardir, 'data.csv'), header=None)
 X = np.array(data[[0,1]])
 y = np.array(data[2])
 plt.figure(1)
