@@ -40,6 +40,7 @@ import matplotlib.pyplot as plt
 
 # Function to help us plot
 def plot_points(data):
+    plt.figure()
     X = np.array(data[["gre","gpa"]])
     y = np.array(data["admit"])
     admitted = X[np.argwhere(y==1)]
@@ -251,10 +252,4 @@ test_out = sigmoid(np.dot(features_test, weights))
 predictions = test_out > 0.5
 accuracy = np.mean(predictions == targets_test)
 print("Prediction accuracy: {:.3f}".format(accuracy))
-
-
-# In[ ]:
-
-
-
 

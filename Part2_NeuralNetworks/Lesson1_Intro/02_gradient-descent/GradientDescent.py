@@ -22,8 +22,8 @@ def plot_points(X, y):
     # Is the labelling correct?
     admitted = X[np.argwhere(y==1)]
     rejected = X[np.argwhere(y==0)]
-    plt.scatter([s[0][0] for s in rejected], [s[0][1] for s in rejected], s = 25, color = 'blue', edgecolor = 'k')
-    plt.scatter([s[0][0] for s in admitted], [s[0][1] for s in admitted], s = 25, color = 'red', edgecolor = 'k')
+    plt.scatter([s[0][0] for s in rejected], [s[0][1] for s in rejected], s = 25, color = 'red', edgecolor = 'k')
+    plt.scatter([s[0][0] for s in admitted], [s[0][1] for s in admitted], s = 25, color = 'blue', edgecolor = 'k')
 
 def display(m, b, color='g--', linewith = .2, alpha = 0.4):
     plt.xlim(-0.05,1.05)
@@ -84,7 +84,7 @@ def update_weights(x, y, weights, bias, learnrate):
 # Error (log-loss) formula
 def error_formula(y, output):
     cross_entropy_arr = -y*np.log(output) - (1 - y)*np.log(1 - output)
-    return cross_entropy_arr
+    return np.mean(cross_entropy_arr)
 
 """
 def trainPerceptronAlgorithm(X, y, learn_rate = 0.01, num_epochs = 25):
@@ -115,9 +115,8 @@ def train(features, targets, epochs, learnrate, graph_lines=False):
             weights, bias = update_weights(x, y, weights, bias, learnrate)
         
         # Printing out the log-loss error on the training set
-        out = output_formula(features, weights, bias)
-        cross_entropy_arr = error_formula(targets, out)
-        loss = np.mean(cross_entropy_arr)
+        out = output_formula(features, weights, bias) # y_hat
+        loss =  error_formula(targets, out) # targets = y, out = y_hat
         errors.append(loss)
         if e % (epochs / 10) == 0:
             print("\n========== Epoch", e,"==========")
