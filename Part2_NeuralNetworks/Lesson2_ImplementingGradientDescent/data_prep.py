@@ -8,8 +8,8 @@ Created on Sun Oct  3 01:40:28 2021
 
 import numpy as np
 import pandas as pd
-
-admissions = pd.read_csv('binary.csv')
+import os.path as pth
+admissions = pd.read_csv(pth.join(pth.pardir, 'binary.csv'))
 
 # Make dummy variables for rank
 data = pd.concat([admissions, pd.get_dummies(admissions['rank'], prefix='rank')], axis=1)

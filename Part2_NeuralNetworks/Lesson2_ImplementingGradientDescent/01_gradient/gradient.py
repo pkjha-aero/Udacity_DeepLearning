@@ -7,6 +7,10 @@ Created on Sun Oct  3 01:40:23 2021
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+
+import sys
+sys.path.append('../')
 from data_prep import features, targets, features_test, targets_test
 
 
@@ -34,6 +38,7 @@ weights = np.random.normal(scale=1 / n_features**.5, size=n_features)
 epochs = 1000
 learnrate = 0.5
 
+loss_arr = []
 for e in range(epochs):
     del_w = np.zeros(weights.shape)
     for x, y in zip(features.values, targets):
@@ -45,12 +50,13 @@ for e in range(epochs):
 
         # TODO: Calculate the output
         h = np.dot(weights, x)
-        output = sigmoid(h)
+        output = sigmoid(h) # y_hat
 
         # TODO: Calculate the error
         error = y - output
 
         # TODO: Calculate the error term
+        # (y - y_hat)*sigmoid_prime(h) = (y - y_hat)*sigmoid(h)*(1- sigmoid(h))
         error_term = error * output * (1 - output)
 
 
@@ -61,14 +67,16 @@ for e in range(epochs):
     # TODO: Update weights using the learning rate and the average change in weights
     weights += learnrate * del_w /n_records
 
+    out = sigmoid(np.dot(features, weights))
+    loss = np.mean((out - targets) ** 2)
+    loss_arr.append(loss)
+    
     # Printing out the mean square error on the training set
     if e % (epochs / 10) == 0:
-        out = sigmoid(np.dot(features, weights))
-        loss = np.mean((out - targets) ** 2)
         if last_loss and last_loss < loss:
-            print("Train loss: ", loss, "  WARNING - Loss Increasing")
+            print("Epoch:", e, "Train loss: ", loss, "  WARNING - Loss Increasing")
         else:
-            print("Train loss: ", loss)
+            print("Epoch:", e, "Train loss: ", loss)
         last_loss = loss
 
 
@@ -77,3 +85,10 @@ tes_out = sigmoid(np.dot(features_test, weights))
 predictions = tes_out > 0.5
 accuracy = np.mean(predictions == targets_test)
 print("Prediction accuracy: {:.3f}".format(accuracy))
+
+ # Plotting the error
+plt.title("Error Plot")
+plt.xlabel('Number of epochs')
+plt.ylabel('Error')
+plt.plot(loss_arr)
+plt.show()
