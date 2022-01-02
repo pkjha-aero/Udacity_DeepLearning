@@ -9,6 +9,7 @@ Created on Sun Oct  3 01:40:28 2021
 import numpy as np
 import pandas as pd
 import os.path as pth
+#admissions = pd.read_csv('binary.csv')
 admissions = pd.read_csv(pth.join(pth.pardir, 'binary.csv'))
 
 # Make dummy variables for rank
