@@ -26,6 +26,11 @@ X = np.random.randn(4)
 weights_input_to_hidden = np.random.normal(0, scale=0.1, size=(N_input, N_hidden))
 weights_hidden_to_output = np.random.normal(0, scale=0.1, size=(N_hidden, N_output))
 
+print('weights_input_to_hidden : ')
+print(weights_input_to_hidden)
+
+print('weights_hidden_to_output : ')
+print(weights_hidden_to_output)
 
 # Make a forward pass through the network
 
