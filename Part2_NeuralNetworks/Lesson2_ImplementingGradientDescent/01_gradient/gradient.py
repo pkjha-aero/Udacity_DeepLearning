@@ -86,7 +86,7 @@ predictions = tes_out > 0.5
 accuracy = np.mean(predictions == targets_test)
 print("Prediction accuracy: {:.3f}".format(accuracy))
 
- # Plotting the error
+# Plotting the error
 plt.title("Error Plot")
 plt.xlabel('Number of epochs')
 plt.ylabel('Error')

@@ -49,7 +49,7 @@ hidden_error_term *= hidden_layer_output* (1 - hidden_layer_output)
 delta_w_h_o = learnrate * output_error_term * hidden_layer_output
 
 # Calculate change in weights for input layer to hidden layer
-delta_w_i_h = learnrate * hidden_error_term * x[:, None] # 
+delta_w_i_h = learnrate * hidden_error_term * x[:, None]
 
 print('Change in weights for hidden layer to output layer:')
 print(delta_w_h_o)
