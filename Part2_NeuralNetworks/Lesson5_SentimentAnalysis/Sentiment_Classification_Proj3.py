@@ -10,6 +10,8 @@ import time
 import sys
 import numpy as np
 
+from collections import Counter
+
 # Encapsulate our neural network in a class
 class SentimentNetwork:
     def __init__(self, reviews, labels, hidden_nodes = 10, learning_rate = 0.1):
@@ -32,13 +34,13 @@ class SentimentNetwork:
         # Build the network to have the number of hidden nodes and the learning rate that
         # were passed into this initializer. Make the same number of input nodes as
         # there are vocabulary words and create a single output node.
-        self.init_network(len(self.review_vocab),hidden_nodes, 1, learning_rate)
+        self.init_network(self.review_vocab_size, hidden_nodes, 1, learning_rate)
 
     def pre_process_data(self, reviews, labels):
         
         review_vocab = set()
         for review in reviews:
-            review_vocab.add(set(review.split(' ')))
+            review_vocab = review_vocab.union(set(review.split(' ')))
         # TODO: populate review_vocab with all of the words in the given reviews
         #       Remember to split reviews into individual words 
         #       using "split(' ')" instead of "split()".
@@ -85,17 +87,16 @@ class SentimentNetwork:
         
         # TODO: initialize self.weights_0_1 as a matrix of zeros. These are the weights between
         #       the input layer and the hidden layer.
-        self.weights_0_1 = np.random.normal(scale=1 / input_nodes ** .5,
-                                        size=(input_nodes, hidden_nodes))
+        self.weights_0_1 = np.zeros((self.input_nodes, self.hidden_nodes))
         
         # TODO: initialize self.weights_1_2 as a matrix of random values. 
         #       These are the weights between the hidden layer and the output layer.
-        self.weights_1_2 = np.random.normal(scale=1 / input_nodes ** .5,
-                                        size= (hidden_nodes, output_nodes))
+        self.weights_1_2 = np.random.normal(0.0, scale=1 / self.output_nodes ** .5,
+                                        size=(self.hidden_nodes, self.output_nodes))
         
         # TODO: Create the input layer, a two-dimensional matrix with shape 
         #       1 x input_nodes, with all values initialized to zero
-        self.layer_0 = np.zeros((1, self.review_vocab_size), dtype=int)
+        self.layer_0 = np.zeros((1, self.input_nodes)) #np.zeros(1, self.review_vocab_size)
         
     def update_input_layer(self, review):
         # TODO: You can copy most of the code you wrote for update_input_layer 
@@ -104,13 +105,14 @@ class SentimentNetwork:
         #       However, MAKE SURE YOU CHANGE ALL VARIABLES TO REFERENCE
         #       THE VERSIONS STORED IN THIS OBJECT, NOT THE GLOBAL OBJECTS.
         #       For example, replace "layer_0 *= 0" with "self.layer_0 *= 0"
-        #global layer_0
+
         # clear out previous state by resetting the layer to be all 0s
         self.layer_0 *= 0
     
         # TODO: count how many times each word is used in the given review and store the results in layer_0 
         for word in review.split(' '):
-            self.layer_0[0, self.word2index[word]] += 1
+            if(word in self.word2index.keys()):
+                self.layer_0[0, self.word2index[word]] += 1
                 
     def get_target_for_label(self,label):
         # TODO: Copy the code you wrote for get_target_for_label 
@@ -158,25 +160,13 @@ class SentimentNetwork:
             #       Do not use an activation function for the hidden layer,
             #       but use the sigmoid activation function for the output layer.
             self.update_input_layer (review)
-            ## Forward pass
+    
             hidden_layer_input = np.matmul(self.layer_0,  self.weights_0_1)
-            hidden_layer_output = (hidden_layer_input
+            hidden_layer_output = hidden_layer_input
 
-            output_layer_in = np.matmul(hidden_layer_output, weights_hidden_output) # o_k = a_j*W_jk, 1X1 matrix
-            output = sigmoid(output_layer_in) # y_k_hat = f(o_k), 1X1 matrix
+            output_layer_in = np.matmul(hidden_layer_output, self.weights_1_2) # o_k = a_j*W_jk, 1X1 matrix
+            output = self.sigmoid(output_layer_in) # y_k_hat = f(o_k), 1X1 matrix
 
-            ## Backwards pass
-            ## Calculate output error
-            error = (target - output)
-
-            # Calculate error term for output layer
-            # (y - y_k_hat)*sigmoid_prime(y_k_hat) = (y - y_k_hat)*output*(1- output)
-            output_error_term = error * output * (1 - output)
-
-            # Calculate error term for hidden layer
-            hidden_error_term = np.matmul(output_error_term, weights_hidden_output.T)
-            hidden_error_term *= hidden_layer_output* (1 - hidden_layer_output)
-            
             # TODO: Implement the back propagation pass here. 
             #       That means calculate the error for the forward pass's prediction
             #       and update the weights in the network according to their
@@ -184,16 +174,45 @@ class SentimentNetwork:
             #       gradient descent and back propagation algorithms you 
             #       learned in class.
             
+            ## Calculate output error
+            target = self.get_target_for_label(label)
+            error = (target - output)
+
+            # Calculate error term for output layer
+            # (y - y_k_hat)*sigmoid_prime(a_k) = (y - y_k_hat)*output*(1- output)
+            output_error_term = error * self.sigmoid_output_2_derivative(output)
+
+            # Calculate error term for hidden layer
+            hidden_error = np.matmul(output_error_term, self.weights_1_2.T)
+            #hidden_error_term = hidden_error * hidden_layer_output* (1 - hidden_layer_output)
+            hidden_error_term = hidden_error # f (h) = h => f'(h) = 1
+            
+            # Calculate change in weights for hidden layer to output layer
+            delta_w_1_2 = self.learning_rate * np.matmul (hidden_layer_output.T, output_error_term)
+            self.weights_1_2 += delta_w_1_2
+            
+            # Calculate change in weights for input layer to hidden layer
+            delta_w_0_1 = self.learning_rate * np.matmul(self.layer_0.T, hidden_error_term)
+            self.weights_0_1 += delta_w_0_1
+                           
             # TODO: Keep track of correct predictions. To determine if the prediction was
             #       correct, check that the absolute value of the output error 
             #       is less than 0.5. If so, add one to the correct_so_far count.
             
-            # For debug purposes, print out our prediction accuracy and speed 
-            # throughout the training process. 
+            hidden_layer_input = np.matmul(self.layer_0,  self.weights_0_1)
+            hidden_layer_output = hidden_layer_input
 
+            output_layer_in = np.matmul(hidden_layer_output, self.weights_1_2) # o_k = a_j*W_jk, 1X1 matrix
+            output = self.sigmoid(output_layer_in) # y_k_hat = f(o_k), 1X1 matrix
+            
+            if (abs(target - output)) < 0.5:
+                correct_so_far += 1
+            
             elapsed_time = float(time.time() - start)
             reviews_per_second = i / elapsed_time if elapsed_time > 0 else 0
             
+            # For debug purposes, print out our prediction accuracy and speed 
+            # throughout the training process.
             sys.stdout.write("\rProgress:" + str(100 * i/float(len(training_reviews)))[:4] \
                              + "% Speed(reviews/sec):" + str(reviews_per_second)[0:5] \
                              + " #Correct:" + str(correct_so_far) + " #Trained:" + str(i+1) \
@@ -243,8 +262,100 @@ class SentimentNetwork:
         #       Note: The review passed into this function for prediction 
         #             might come from anywhere, so you should convert it 
         #             to lower case prior to using it.
+        # Input layer
+        self.update_input_layer(review.lower())
+        hidden_layer_input = np.matmul(self.layer_0,  self.weights_0_1)
+        hidden_layer_output = hidden_layer_input
+
+        output_layer_in = np.matmul(hidden_layer_output, self.weights_1_2) # o_k = a_j*W_jk, 1X1 matrix
+        output = self.sigmoid(output_layer_in) # y_k_hat = f(o_k), 1X1 matrix
         
         # TODO: The output layer should now contain a prediction. 
         #       Return `POSITIVE` for predictions greater-than-or-equal-to `0.5`, 
         #       and `NEGATIVE` otherwise.
-        pass
+        if (output[0] >= 0.5):
+            pred = 'POSITIVE'
+        else:
+            pred = 'NEGATIVE'
+            
+        return pred
+
+
+# READ THE REVIEWS DATA
+g = open('reviews.txt','r') # What we know!
+reviews = list(map(lambda x:x[:-1],g.readlines()))
+g.close()
+
+g = open('labels.txt','r') # What we WANT to know!
+labels = list(map(lambda x:x[:-1].upper(),g.readlines()))
+g.close()
+
+
+#DO THE ANALYSIS
+"""
+#Run the following cell to create a SentimentNetwork that will train on all but the last 1000 reviews 
+#(we're saving those for testing). Here we use a learning rate of 0.1.
+"""
+n_data_train = 24000
+n_data_total = 25000
+n_data_test = n_data_total - n_data_train
+
+hidden_nodes = 10
+
+learning_rate = 0.1
+print ('\n\nCreating a network with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp = SentimentNetwork(reviews[:-n_data_test],labels[:-n_data_test], hidden_nodes, learning_rate)
+
+"""
+Run the following cell to test the network's performance against the last 1000 reviews (the ones we held out from our training set). 
+**We have not trained the model yet, so the results should be about 50% as it will just be guessing and there are only 
+two possible values to choose from.**
+"""
+print ('\nTesting on last {} data points, but without training the network....'.format(n_data_test))
+mlp.test(reviews[-n_data_test:],labels[-n_data_test:])
+
+"""
+Run the following cell to actually train the network. During training, it will display 
+the model's accuracy repeatedly as it trains so you can see how well it's doing.
+"""
+print ('\nNow training the network created with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp.train(reviews[:-n_data_test],labels[:-n_data_test])
+
+"""
+That most likely didn't train very well. Part of the reason may be because the learning rate is too high. 
+Run the following cell to recreate the network with a smaller learning rate, `0.01`, and then train the new network.
+"""
+learning_rate = 0.01
+print ('\n\nCreating a network with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp = SentimentNetwork(reviews[:-n_data_test],labels[:-n_data_test], hidden_nodes, learning_rate)
+
+print ('\nNow training the network created with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp.train(reviews[:-n_data_test],labels[:-n_data_test])
+
+"""
+That probably wasn't much different. Run the following cell to recreate the network one more time with 
+an even smaller learning rate, `0.001`, and then train the new network.
+"""
+learning_rate = 0.001
+print ('\n\nCreating a network with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp = SentimentNetwork(reviews[:-n_data_test],labels[:-n_data_test], hidden_nodes, learning_rate)
+
+print ('\nNow training the network created with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp.train(reviews[:-n_data_test],labels[:-n_data_test])
+
+print ('\nNow testing the network created with last {} data points and trained with first {} data points and learning rate = {}'.format(
+    n_data_test, n_data_train, learning_rate))
+mlp.test(reviews[-n_data_test:],labels[-n_data_test:])
+
+learning_rate = 0.00001
+print ('\n\nCreating a network with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp = SentimentNetwork(reviews[:-n_data_test],labels[:-n_data_test], hidden_nodes, learning_rate)
+
+print ('\nNow training the network created with first {} data points and learning rate = {}'.format(n_data_train, learning_rate))
+mlp.train(reviews[:-n_data_test],labels[:-n_data_test])
+
+print ('\nNow testing the network created with last {} data points and trained with first {} data points and learning rate = {}'.format(
+    n_data_test, n_data_train, learning_rate))
+mlp.test(reviews[-n_data_test:],labels[-n_data_test:])
+
+print ('\nDone...')
