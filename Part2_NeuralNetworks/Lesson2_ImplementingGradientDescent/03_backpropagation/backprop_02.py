@@ -54,7 +54,7 @@ for e in range(epochs):
         error = y - output
 
         # Calculate error term for the output unit
-        # (y - y_k_hat)*sigmoid_prime(y_k_hat) = (y - y_k_hat)*output*(1- output)
+        # (y - y_k_hat)*sigmoid_prime(a_k) = (y - y_k_hat)*output*(1- output)
         output_error_term = error * output * (1 - output)
 
         ## propagate errors to hidden layer

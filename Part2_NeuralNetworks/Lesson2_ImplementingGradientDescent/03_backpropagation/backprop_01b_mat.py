@@ -39,7 +39,7 @@ output = sigmoid(output_layer_in) # y_k_hat = f(o_k), 1X1 matrix
 error = (target - output)
 
 # Calculate error term for output layer
-# (y - y_k_hat)*sigmoid_prime(y_k_hat) = (y - y_k_hat)*output*(1- output)
+# (y - y_k_hat)*sigmoid_prime(a_k) = (y - y_k_hat)*output*(1- output)
 output_error_term = error * output * (1 - output)
 
 # Calculate error term for hidden layer
