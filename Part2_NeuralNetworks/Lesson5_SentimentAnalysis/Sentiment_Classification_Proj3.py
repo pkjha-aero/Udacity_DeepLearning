@@ -91,7 +91,7 @@ class SentimentNetwork:
         
         # TODO: initialize self.weights_1_2 as a matrix of random values. 
         #       These are the weights between the hidden layer and the output layer.
-        self.weights_1_2 = np.random.normal(0.0, scale=1 / self.output_nodes ** .5,
+        self.weights_1_2 = np.random.normal(0.0, scale=1 / self.hidden_nodes ** .5,
                                         size=(self.hidden_nodes, self.output_nodes))
         
         # TODO: Create the input layer, a two-dimensional matrix with shape 
