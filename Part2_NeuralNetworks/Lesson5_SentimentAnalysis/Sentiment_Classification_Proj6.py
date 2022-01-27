@@ -61,7 +61,7 @@ class SentimentNetwork:
         for word, count in total_counts.most_common():
             if count > self.min_count:
                 pos_neg_ratio = np.log(positive_counts[word] / float(negative_counts[word]+1))
-                if np.abs(pos_neg_ratio) > self.polarity_cutoff:
+                if np.abs(pos_neg_ratio) >= self.polarity_cutoff:
                     pos_neg_ratios[word] = pos_neg_ratio
             
         # Create the vocab set
