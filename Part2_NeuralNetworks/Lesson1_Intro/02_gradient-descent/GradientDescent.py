@@ -48,12 +48,6 @@ def prediction(X, W, b):
 def output_formula(features, weights, bias):
     #linear_comb = (np.matmul(features,weights) + bias)
     linear_comb = np.dot(features,weights) + bias
-    """
-    linear_comb = 0.0
-    for i in range(len(weights)):
-        linear_comb += features[i]*weights[i]
-    linear_comb += bias
-    """
     return sigmoid (linear_comb)
 
 """
@@ -79,11 +73,16 @@ def update_weights(x, y, weights, bias, learnrate):
     d_error = y - y_hat
     weights += learnrate * d_error * x
     bias += learnrate * d_error
-    return weights, bias   
+    return weights, bias
+
+def perceptronStep(features, targets, weights, bias, learnrate):
+    for x, y in zip(features, targets): # For each record or data point
+        weights, bias = update_weights(x, y, weights, bias, learnrate)
+    return weights, bias
 
 # Error (log-loss) formula
-def error_formula(y, output):
-    cross_entropy_arr = -y*np.log(output) - (1 - y)*np.log(1 - output)
+def error_formula(y_gt, output):
+    cross_entropy_arr = -y_gt*np.log(output) - (1 - y_gt)*np.log(1 - output)
     return np.mean(cross_entropy_arr)
 
 """
@@ -109,11 +108,7 @@ def train(features, targets, epochs, learnrate, graph_lines=False):
     weights = np.random.normal(scale=1 / n_features**.5, size=n_features)
     bias = 0
     for e in range(epochs):
-        del_w = np.zeros(weights.shape)
-        for x, y in zip(features, targets): # For each record or data point
-            #x = x.reshape(1, n_features)
-            weights, bias = update_weights(x, y, weights, bias, learnrate)
-        
+        weights, bias = perceptronStep(features, targets, weights, bias, learnrate)
         # Printing out the log-loss error on the training set
         out = output_formula(features, weights, bias) # y_hat
         loss =  error_formula(targets, out) # targets = y, out = y_hat
