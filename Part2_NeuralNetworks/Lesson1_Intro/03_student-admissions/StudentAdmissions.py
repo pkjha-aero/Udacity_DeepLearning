@@ -148,9 +148,9 @@ print(test_data[:10])
 # In[ ]:
 
 
-features = train_data.drop('admit', axis=1)
+features = train_data.drop('admit', axis=1).values.astype(float)
 targets = train_data['admit']
-features_test = test_data.drop('admit', axis=1)
+features_test = test_data.drop('admit', axis=1).values.astype(float)
 targets_test = test_data['admit']
 
 print(features[:10])
@@ -169,8 +169,8 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 def sigmoid_prime(x):
     return sigmoid(x) * (1-sigmoid(x))
-def error_formula(y, output):
-    return - y*np.log(output) - (1 - y) * np.log(1-output)
+def error_formula(y_gt, output):
+    return - y_gt*np.log(output) - (1 - y_gt) * np.log(1-output)
 
 
 # # TODO: Backpropagate the error
@@ -181,8 +181,8 @@ def error_formula(y, output):
 
 
 # TODO: Write the error term formula
-def error_term_formula(x, y, output):
-    return (y - output)*x
+def error_term_formula(x, y_gt, output):
+    return (y_gt - output)*x
 
 
 # In[ ]:
@@ -190,11 +190,11 @@ def error_term_formula(x, y, output):
 
 # Neural Network hyperparameters
 epochs = 1000
-learnrate = 0.0001
+learnrate = 0.00001
 
 # Training function
 def train_nn(features, targets, epochs, learnrate):
-    
+
     # Use to same seed to make debugging easier
     np.random.seed(42)
 
@@ -206,7 +206,7 @@ def train_nn(features, targets, epochs, learnrate):
 
     for e in range(epochs):
         del_w = np.zeros(weights.shape)
-        for x, y in zip(features.values, targets):
+        for x, y in zip(features, targets):
             # Loop through all records, x is the input, y is the target
 
             # Activation of the output unit
