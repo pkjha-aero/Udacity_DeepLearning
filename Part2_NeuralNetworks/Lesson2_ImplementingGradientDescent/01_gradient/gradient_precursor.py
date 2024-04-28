@@ -31,25 +31,26 @@ w = np.array([0.5, -0.5, 0.3, 0.1])
 ### Note: Some steps have been consolidated, so there are
 ###       fewer variable names than in the above sample code
 
-# TODO: Calculate the node's linear combination of inputs and weights
+# Calculate the node's linear combination of inputs and weights
 h = np.dot(w, x)
 
-# TODO: Calculate output of neural network
-nn_output = sigmoid(h)
+# Calculate output of neural network
+y_hat = sigmoid(h)
 
-# TODO: Calculate error of neural network
-error = y - nn_output
+# Calculate error of neural network
+error = y - y_hat
 
-# TODO: Calculate the error term
+# Calculate the error term
 #       Remember, this requires the output gradient, which we haven't
-#       specifically added a variable for.
-error_term = error * sigmoid_prime(h)
+#       specifically added a variable for.#
+#delta = error                    # This is for cross-entropy
+delta = error * sigmoid_prime(h) # This is for sum of squarred error (SSE)
 
-# TODO: Calculate change in weights
-del_w = learnrate * error_term*x
+# Calculate change in weights
+del_w = learnrate * delta * x
 
 print('Neural Network output:')
-print(nn_output)
+print(y_hat)
 print('Amount of Error:')
 print(error)
 print('Change in Weights:')
