@@ -18,9 +18,9 @@ def sigmoid(x):
     """
     Calculate sigmoid
     """
-    return 1 / (1 + np.exp(-x))
+    return 1/(1+np.exp(-x))
 
-# TODO: We haven't provided the sigmoid_prime function like we did in
+#       We haven't provided the sigmoid_prime function like we did in
 #       the previous lesson to encourage you to come up with a more
 #       efficient solution. If you need a hint, check out the comments
 #       in solution.py from the previous lecture.
@@ -41,30 +41,30 @@ learnrate = 0.5
 loss_arr = []
 for e in range(epochs):
     del_w = np.zeros(weights.shape)
-    for x, y in zip(features.values, targets):
+    for x, y in zip(features, targets):
         # Loop through all records, x is the input, y is the target
 
         # Note: We haven't included the h variable from the previous
         #       lesson. You can add it if you want, or you can calculate
         #       the h together with the output
 
-        # TODO: Calculate the output
-        h = np.dot(weights, x)
-        output = sigmoid(h) # y_hat
+        # Calculate the output
+        h = np.dot(x, weights)
+        y_hat = sigmoid(h) # y_hat
 
-        # TODO: Calculate the error
-        error = y - output
+        # Calculate the error
+        error = y - y_hat
 
-        # TODO: Calculate the error term
+        # Calculate the error term (SSE)
         # (y - y_hat)*sigmoid_prime(h) = (y - y_hat)*sigmoid(h)*(1- sigmoid(h))
-        error_term = error * output * (1 - output)
+        delta = error * y_hat * (1 - y_hat)
 
 
-        # TODO: Calculate the change in weights for this sample
+        # Calculate the change in weights for this sample
         #       and add it to the total weight change
-        del_w +=  error_term * x
+        del_w +=  delta * x
 
-    # TODO: Update weights using the learning rate and the average change in weights
+    # Update weights using the learning rate and the average change in weights
     weights += learnrate * del_w /n_records
 
     out = sigmoid(np.dot(features, weights))
@@ -81,8 +81,8 @@ for e in range(epochs):
 
 
 # Calculate accuracy on test data
-tes_out = sigmoid(np.dot(features_test, weights))
-predictions = tes_out > 0.5
+test_out = sigmoid(np.dot(features_test, weights))
+predictions = test_out > 0.5
 accuracy = np.mean(predictions == targets_test)
 print("Prediction accuracy: {:.3f}".format(accuracy))
 
