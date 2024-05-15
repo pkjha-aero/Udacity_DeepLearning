@@ -56,7 +56,7 @@ for e in range(epochs):
         error = y - y_hat
 
         # Calculate the error term (SSE)
-        # (y - y_hat)*sigmoid_prime(h) = (y - y_hat)*sigmoid(h)*(1- sigmoid(h))
+        # (y - y_hat)*sigmoid_prime(y_hat) = (y - y_hat)*sigmoid(y_hat)*(1- sigmoid(y_hat))
         delta = error * y_hat * (1 - y_hat)
 
 

@@ -36,7 +36,7 @@ learnrate = 0.5
 
 for e in range(epochs):
     del_w = np.zeros(weights.shape)
-    for x, y in zip(features.values, targets):
+    for x, y in zip(features, targets):
         # Loop through all records, x is the input, y is the target
 
         # Activation of the output unit
